@@ -1,21 +1,8 @@
 const fs = require('fs');
 const http = require('http');
 const url = require('url');
+const replaceTemplate = require('./modules/replaceTemplet');
 ///// Server
-
-function replaceTemplate(temp,product){
-    let output = temp.replace(/{%PRODUCTNAME%}/g,product.productName);
-    output = output.replace(/{%IMGE%}/g,product.image);
-    output = output.replace(/{%FROM%}/g,product.from);
-    output = output.replace(/{%NUTRIENTS%}/g,product.nutrients);
-    output = output.replace(/{%QUANTITY%}/g,product.quantity);
-    output = output.replace(/{%PRICE%}/g,product.price);
-    output = output.replace(/{%ID%}/g,product.id);
-    output = output.replace(/{%DESCRIPTION%}/g,product.description);
-    if(!product.organic) output = output.replace(/{%NOT_ORGANIC%}/g,'not-organic');
-    return output;
-}
-
 const tempOverview = fs.readFileSync(`${__dirname}/starter/templates/templet-overview.html`,'utf-8');  
 const tempCard = fs.readFileSync(`${__dirname}/starter/templates/templet-card.html`,'utf-8');  
 const tempProduct = fs.readFileSync(`${__dirname}/starter/templates/templet-product.html`,'utf-8');  
@@ -23,7 +10,7 @@ const data = fs.readFileSync(`${__dirname}/starter/dev-data/data.json`,'utf-8');
 const objData = JSON.parse(data); // transform data from strig json to object to res it to browser
 
 const server = http.createServer((req,res)=>{
-    const {query,pathname} = url.parse(req.url,true);
+    const {query,pathname} = url.parse(req.url,true); // parse ==> make data in url  transform from string to object by put true to can access each product in product page by id saved in objData array
     // Overview
     if(pathname === '/' || pathname ==='/overview'){
         res.writeHead(200,{'Content-type':'text/html'});
