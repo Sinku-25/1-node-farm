@@ -23,23 +23,23 @@ const data = fs.readFileSync(`${__dirname}/starter/dev-data/data.json`,'utf-8');
 const objData = JSON.parse(data); // transform data from strig json to object to res it to browser
 
 const server = http.createServer((req,res)=>{
-    const pathName = req.url;
-
+    const {query,pathname} = url.parse(req.url,true);
     // Overview
-    if(pathName === '/' || pathName ==='/overview'){
+    if(pathname === '/' || pathname ==='/overview'){
         res.writeHead(200,{'Content-type':'text/html'});
         const cardHtml = objData.map(el=>replaceTemplate(tempCard,el)).join('');
-        console.log(cardHtml);
-        
         output = tempOverview.replace(/{%PRODUCTCARD%}/g,cardHtml)
         res.end(output);
     }
     // Proeduct
-    else if(pathName ==='/product'){
-        res.end('This is the Product');
+    else if(pathname ==='/product'){
+        res.writeHead(200,{'Content-type':'text/html'});
+        const product = objData[query.id];
+        const output = replaceTemplate(tempProduct,product);
+        res.end(output);
     }
     // Api
-    else if(pathName==='/api'){
+    else if(pathname==='/api'){
         res.writeHead(200,{
             'Content-type':'application/json'
         })
